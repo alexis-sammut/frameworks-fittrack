@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitTrack - Your Fitness Journey</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{% static 'images/favicon.ico' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/style.css' %}"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>FitTrack</h1>
+        <nav>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li class="has-submenu">
+              <a href="#">Log</a>
+              <ul class="submenu">
+                <li><a href="/log_workout">Log Workout</a></li>
+                <li><a href="/log_meal">Log Meal</a></li>
+                <li><a href="/log_mood">Log Mood</a></li>
+              </ul>
+            </li>
+            <li class="has-submenu">
+              <a href="#">Review Progress</a>
+              <ul class="submenu">
+                <li><a href="/review_workouts">Review Workouts</a></li>
+                <li><a href="/review_meals">Review Meals</a></li>
+                <li><a href="/review_mood">Review Mood</a></li>
+              </ul>
+            </li>
+            <li><a href="/contact">Contact</a></li>
+            <li>
+              {% comment %} {% if 'user_id' in session %}
+              <a class="account" href="{{ url_for('account') }}"
+                >Account</a
+              >
+              {% else %}
+              <a class="account" href="{{ url_for('authentification') }}"
+                >Account</a
+              >
+              {% endif %} {% endcomment %}
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main>{% block main %} {% endblock %}</main>
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 FitTrack. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="{% static 'js/script.js' %}"></script>
+  </body>
+</html>
