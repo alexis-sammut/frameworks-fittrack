@@ -21,24 +21,24 @@
         <h1>FitTrack</h1>
         <nav>
           <ul>
-            <li><a href="/">Home</a></li>
+            <li><a href="{% url 'home' %}">Home</a></li>
             <li class="has-submenu">
               <a href="#">Log</a>
               <ul class="submenu">
-                <li><a href="/log_workout">Log Workout</a></li>
-                <li><a href="/log_meal">Log Meal</a></li>
-                <li><a href="/log_mood">Log Mood</a></li>
+                <li><a href="{% url 'log-workout' %}">Log Workout</a></li>
+                <li><a href="{% url 'log-meal' %}">Log Meal</a></li>
+                <li><a href="{% url 'log-mood' %}">Log Mood</a></li>
               </ul>
             </li>
             <li class="has-submenu">
               <a href="#">Review Progress</a>
               <ul class="submenu">
-                <li><a href="/review_workouts">Review Workouts</a></li>
-                <li><a href="/review_meals">Review Meals</a></li>
-                <li><a href="/review_mood">Review Mood</a></li>
+                <li><a href="{% url 'review-workouts' %}">Review Workouts</a></li>
+                <li><a href="{% url 'review-meals' %}">Review Meals</a></li>
+                <li><a href="{%url 'review-moods' %}">Review Mood</a></li>
               </ul>
             </li>
-            <li><a href="/contact">Contact</a></li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
             <li>
               {% comment %} {% if 'user_id' in session %}
               <a class="account" href="{{ url_for('account') }}"

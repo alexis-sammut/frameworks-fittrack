@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-
+from .models import Workout
 
 def log(request):
     return render(request, 'workouts/log_workout.html')
 
 def review(request):
-    return render(request, 'workouts/review_workouts.html')
+    context = {
+       'workouts': Workout.objects.all()
+    }
+    return render(request, 'workouts/review_workouts.html', context) 

@@ -31,6 +31,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'moods.apps.MoodsConfig',
+    'meals.apps.MealsConfig',
+    'pages.apps.PagesConfig',
     'workouts.apps.WorkoutsConfig',
     'django.contrib.admin',
     'django.contrib.auth',
