@@ -197,6 +197,16 @@ main {
   box-shadow: 0 6px 15px rgba(243, 156, 18, 0.4);
 }
 
+.tertiary-button{
+  background-color: #9b59b6;
+  box-shadow: 0 4px 10px rgba(155, 89, 182, 0.3);
+}
+
+.tertiary-button:hover{
+  background-color: #8e44ad;
+  box-shadow: 0 6px 15px rgba(155, 89, 182, 0.4);
+}
+
 .benefit-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -264,6 +274,8 @@ main {
   cursor: pointer;
   position: relative;
   border-radius: 0;
+  text-decoration: none;
+  text-align: center;
 }
 
 .tab-button.active {

@@ -47,48 +47,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Authentification page
   // Referencing items
+
   const loginTab = document.getElementById("loginTab");
-  const createAccountTab = document.getElementById("createAccountTab");
+  const registerTab = document.getElementById("registerTab");
   const loginForm = document.getElementById("loginForm");
-  const createAccountForm = document.getElementById("createAccountForm");
+  const registerForm = document.getElementById("registerForm");
 
   // Function to switch between login and create account forms
   function formSwitcher() {
     loginTab.classList.toggle("active");
-    createAccountTab.classList.toggle("active");
+    registerTab.classList.toggle("active");
     loginForm.classList.toggle("hidden-form");
-    createAccountForm.classList.toggle("hidden-form");
+    registerForm.classList.toggle("hidden-form");
+
   }
 
   // Function to clear flash messages
-  function clearFlashMessages() {
-    const successMessages = document.querySelectorAll(".flash");
-    successMessages.forEach((element) => {
-      element.remove();
-    });
-  }
+  // function clearFlashMessages() {
+  //   const successMessages = document.querySelectorAll(".flash");
+  //   successMessages.forEach((element) => {
+  //     element.remove();
+  //   });
+  // }
 
-  // Add event listeners for the tab buttons to switch form, and hide message
-  if (loginTab && createAccountTab) {
-    loginTab.addEventListener("click", () => {
-      formSwitcher();
-      clearFlashMessages();
-    });
-    createAccountTab.addEventListener("click", () => {
-      formSwitcher();
-      clearFlashMessages();
-    });
-  }
+  // Check the URL path to automatically switch to the appropriate form
 
-  // Check the URL for a parameter to automatically switch to the Create Account form
-  const urlParams = new URLSearchParams(window.location.search);
-  const showRegisterForm = urlParams.get("show_register");
-
-  if (showRegisterForm === "true") {
+  if (loginTab){
+      const initialMode = DJANGO_INITIAL_MODE;
+    if(initialMode === '/users/register/') {
     if (loginForm.classList.contains("hidden-form") === false) {
       formSwitcher();
     }
-  }
+  }}
 
   // Account page
   // Referencing items
@@ -711,7 +701,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!container) return;
 
       if (workouts.length === 0) {
-        container.innerHTML = `<p class="no-data-message">No workouts logged yet. <a href="/log_workout">Log one now!</a></p>`;
+        container.innerHTML = `<p class="no-data-message">No workouts logged yet. <a href="/workout/log">Log one now!</a></p>`;
         return;
       }
 
@@ -975,7 +965,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!container) return;
 
       if (meals.length === 0) {
-        container.innerHTML = `<p class="no-data-message">No meals logged yet. <a href="/log_meal">Log one now!</a></p>`;
+        container.innerHTML = `<p class="no-data-message">No meals logged yet. <a href="/meal/log">Log one now!</a></p>`;
         return;
       }
 
@@ -1262,7 +1252,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       if (sortedMoods.length === 0) {
-        container.innerHTML = `<p class="no-data-message">No moods logged yet. <a href="/log_mood">Log one now!</a></p>`;
+        container.innerHTML = `<p class="no-data-message">No moods logged yet. <a href="/mood/log">Log one now!</a></p>`;
         return;
       }
       container.innerHTML = "";

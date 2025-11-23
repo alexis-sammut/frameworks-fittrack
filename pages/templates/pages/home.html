@@ -2,25 +2,23 @@
 <section id="hero" class="hero">
   <div class="container">
     <div class="hero-content">
-      {% if user %}
-      {% comment %} <h2>Welcome back to FitTrack, {{ user.name | capitalize_words }}!</h2> {% endcomment %}
+      {% if user.is_authenticated %}
+
+      <h2>Welcome back to FitTrack, {{ user.first_name|default:user.username }}!</h2>
       <p>
         Glad to see you again! Let's get to work on your fitness journey.
       </p>
-      <div class="button-group">
-        <a href="/log_workout" class="button">Start Tracking Your Workout</a>
-        <a href="/log_meal" class="button secondary-button">Log Your Meal</a>
-      </div>
       {% else %}
       <h2>Welcome to FitTrack!</h2>
       <p>
         Your ultimate companion for tracking workouts and meals, and achieving your fitness goals.
       </p>
-
-        <a href="/log_workout" class="button">Start Tracking Your Workout</a>
-        <a href="/log_meal" class="button secondary-button">Log Your Meal</a>
-
       {% endif %}
+      <div class="button-group">
+        <a href="{% url 'log-workout' %}" class="button">Log a Workout</a>
+        <a href="{% url 'log-meal' %}" class="button secondary-button">Log a Meal</a>
+        <a href="{% url 'log-mood' %}" class="button tertiary-button">Log a Mood</a>
+      </div>  
     </div>
   </div>
 </section>

@@ -40,15 +40,13 @@
             </li>
             <li><a href="{% url 'contact' %}">Contact</a></li>
             <li>
-              {% comment %} {% if 'user_id' in session %}
-              <a class="account" href="{{ url_for('account') }}"
-                >Account</a
-              >
-              {% else %}
-              <a class="account" href="{{ url_for('authentification') }}"
-                >Account</a
-              >
-              {% endif %} {% endcomment %}
+              {% if user.is_authenticated %}
+              <a class="account" href="{% url 'account' %}"
+                >Account</a>
+                {%else%}
+                <a class="account" href="{% url 'login' %}"
+                >Log in</a>
+                {%endif%}
             </li>
           </ul>
         </nav>

@@ -1,0 +1,88 @@
+{% extends "base.html" %} {% block main %}
+<section id="log-workout" class="section">
+  <div class="container">
+    <div class="tab-container">
+      <a href="{% url 'login' %}" id="loginTab" class="tab-button active"
+        >Log In</a
+      >
+      <a href="{% url 'register' %}" id="registerTab" class="tab-button"
+        >Register</a
+      >
+    </div>
+    <div class="form-container">
+
+      <form id="loginForm" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="{{ form_login.username.id_for_label }}"
+            >Email or Username</label
+          >
+          {{ form_login.username }} {% if form_login.username.errors %}
+          <span class="error">{{ form_login.username.errors }}</span>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form_login.password.id_for_label }}">Password</label>
+          {{ form_login.password }} {% if form_login.password.errors %}
+          <span class="error">{{ form_login.password.errors }}</span>
+          {% endif %}
+        </div>
+        {% if form_login.non_field_errors %}
+        <div class="flash">
+          <p class="flash-error">{{ form_login.non_field_errors }}</p>
+        </div>
+        {% endif %}
+        <button type="submit" class="button">Log In</button>
+        <a href="{% url 'register'%}">Don't have an account yet? Create one now.</a>
+      </form>
+
+      <form id="registerForm" class="hidden-form" method="POST">
+        {% csrf_token %}
+        <div class="form-entry-row">
+          <div class="form-group">
+            <label for="{{ form_register.username.id_for_label }}"
+              >Username</label
+            >
+            {{ form_register.username }} {% if form_register.username.errors %}
+            <span class="error">{{ form_register.username.errors }}</span>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="{{ form_register.email.id_for_label }}"
+              >Email Address</label
+            >
+            {{ form_register.email }} {% if form_register.email.errors %}
+            <span class="error">{{ form_register.email.errors }}</span>
+            {% endif %}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="{{ form_register.password1.id_for_label }}"
+            >Password</label
+          >
+          {{ form_register.password1 }} {% if form_register.password1.errors %}
+          <span class="error">{{ form_register.password1.errors }}</span>
+          {% endif %}
+        </div>
+        <div class="form-group">
+          <label for="{{ form_register.password2.id_for_label }}"
+            >Confirm Password</label
+          >
+          {{ form_register.password2 }} {% if form_register.password2.errors %}
+          <span class="error">{{ form_register.password2.errors }}</span>
+          {% endif %}
+        </div>
+        {% if form_register.non_field_errors %}
+        <div class="flash">
+          <p class="flash-error">{{ form_register.non_field_errors }}</p>
+        </div>
+        {% endif %}
+        <button type="submit" class="account-button">Register</button>
+      </form>
+    </div>
+  </div>
+</section>
+<script>
+  const DJANGO_INITIAL_MODE = "{{ initial_mode }}";
+</script>
+{% endblock %}

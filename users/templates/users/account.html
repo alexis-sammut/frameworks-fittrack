@@ -1,0 +1,160 @@
+{% extends "base.html" %} {% block main %}
+<section id="log-workout" class="section">
+  <div class="container">
+    <h2 class="review-headers">
+      Hey, {{ user.first_name|default:user.username }}!
+    </h2>
+    <div class="data-forms">
+      <ul class="settings-list">
+        <li>
+          <button id="changePasswordBtn" class="settings-row">
+            <img src="/static/images/password.png" alt="Change Password Icon" />
+            <span>Change password</span>
+          </button>
+        </li>
+        <li>
+          <button id="changeAccountInfoBtn" class="settings-row">
+            <img
+              src="/static/images/account_management.png"
+              alt="Change Account Information Icon"
+            />
+            <span>Change account information</span>
+          </button>
+        </li>
+        <li>
+          <button id="logoutBtn" class="settings-row">
+            <img src="/static/images/logout.png" alt="Log Out Icon" />
+            <span>Log out</span>
+          </button>
+        </li>
+        <li>
+          <button id="deleteAccountBtn" class="settings-row delete-button">
+            <img
+              src="/static/images/delete.png"
+              alt="Permanently Delete Account Icon"
+            />
+            <span>Permanently delete account</span>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <div id="popupPasswordForm" class="popup-form" style="display: none">
+      <div class="form-content">
+        <span class="close-button" id="closeFormBtn-password">&times;</span>
+        <h3>Change password</h3>
+        <form action="" method="POST">
+          <div class="form-group">
+            <label for="change-password">New password</label>
+            <input
+              type="password"
+              id="change-password"
+              name="new_password"
+              required
+              autocomplete="new-password"
+            />
+          </div>
+          {% comment %} {% with messages =
+          get_flashed_messages(with_categories=true) %} {% if messages %}
+          <div class="flash">
+            {% for category, message in messages %}
+            <p class="flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+          </div>
+          {% endif %} {% endwith %} {% endcomment %}
+          <button type="submit" class="account-button">Change password</button>
+        </form>
+      </div>
+    </div>
+    <div id="accountInfoPopupForm" class="popup-form" style="display: none">
+      <div class="form-content">
+        <span class="close-button" id="closeFormBtn-account">&times;</span>
+        <h3>Change account information</h3>
+        <form action="{% url 'update-account' %}" method="POST">
+          {% csrf_token %}
+
+          <div class="form-group">
+            <label for="{{ form_update.username.id_for_label }}"
+              >Username</label
+            >
+            {{ form_update.username }} {% if form_update.username.errors %}
+            <span class="error">{{ form_update.username.errors }}</span>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form_update.email.id_for_label }}"
+              >Email Address</label
+            >
+            {{ form_update.email }} {% if form_update.email.errors %}
+            <span class="error">{{ form_update.email.errors }}</span>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form_update.first_name.id_for_label }}"
+              >First Name</label
+            >
+            {{ form_update.first_name }}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form_update.last_name.id_for_label }}"
+              >Last Name</label
+            >
+            {{ form_update.last_name }}
+          </div>
+
+          {% if form_update.non_field_errors %}
+          <div class="flash">
+            <p class="flash-error">{{ form_update.non_field_errors }}</p>
+          </div>
+          {% endif %}
+
+          <button type="submit" class="account-button">
+            Change information
+          </button>
+        </form>
+      </div>
+    </div>
+    <div id="logoutPopupForm" class="popup-form" style="display: none">
+      <div class="form-content">
+        <span class="close-button" id="closeFormBtn-logout">&times;</span>
+        <h3>Are you sure you want to log out?</h3>
+        <form action="{% url 'logout' %}" method="POST">
+          {% csrf_token %}
+          <button type="submit" class="remove-item-button">Log out</button>
+        </form>
+      </div>
+    </div>
+    <div id="deleteAccountPopupForm" class="popup-form" style="display: none">
+      <div class="form-content">
+        <span class="close-button" id="closeFormBtn-delete">&times;</span>
+        <h3>Are you sure you want to permanently delete your account?</h3>
+        <form action="{% url 'delete-account' %}" method="POST">
+          {% csrf_token %}
+
+          <div class="form-group">
+            {{ form_delete.confirm }}
+            <label for="{{ form_delete.confirm.id_for_label }}" style= "display:inline"
+              >{{ form_delete.confirm.label }}</label
+            >
+            {% if form_delete.confirm.errors %}
+            <span class="error">{{ form_delete.confirm.errors }}</span>
+            {% endif %}
+          </div>
+
+          {% if form_delete.non_field_errors %}
+          <div class="flash">
+            <p class="flash-error">{{ form_delete.non_field_errors }}</p>
+          </div>
+          {% endif %}
+
+          <button type="submit" class="remove-item-button">
+            Delete account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
