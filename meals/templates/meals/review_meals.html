@@ -1,17 +1,4 @@
-{% extends "base.html" %} {% block main %} {% if not user %}
-
-<div class="logout-banner">
-  You're not currently logged in. Any logged meal will be stored temporarily
-  only. If you wish to keep data logged, please
-  {% comment %} <a href="{{ url_for('authentification') }}" {% endcomment %}
-    >log in or create an account</a
-  >
-  first.
-</div>
-{% endif %}
-<script id="review_meals">
-  {% comment %} const mealsData = {{ meals | tojson }}; {% endcomment %}
-</script>
+{% extends "base.html" %} {% block main %}
 <section id="stats-overview" class="section">
   <div class="container">
     <h2 class="review-headers">Meals</h2>
@@ -21,63 +8,63 @@
           <div class="stat-box amount-colour">
             <p>Total Amount</p>
             <div class="data">
-              <span id="logged-total" class="stat-value">0</span
+              <span id="logged-total" class="stat-value">{{ total_weight }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box fat-colour">
             <p>Total Fat</p>
             <div class="data">
-              <span id="logged-total-fat" class="stat-value">0</span
+              <span id="logged-total-fat" class="stat-value">{{ total_fat }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box fat-colour">
             <p>Total Saturated Fat</p>
             <div class="data">
-              <span id="logged-total-saturated-fat" class="stat-value">0</span
+              <span id="logged-total-saturated-fat" class="stat-value">{{ total_saturated_fat }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box carbs-colour">
             <p>Total Carbs</p>
             <div class="data">
-              <span id="logged-total-carbs" class="stat-value">0</span
+              <span id="logged-total-carbs" class="stat-value">{{ total_carbs }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box carbs-colour">
             <p>Total Fiber</p>
             <div class="data">
-              <span id="logged-total-fiber" class="stat-value">0</span
+              <span id="logged-total-fiber" class="stat-value">{{ total_fiber }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box carbs-colour">
             <p>Total Sugar</p>
             <div class="data">
-              <span id="logged-total-sugar" class="stat-value">0</span
+              <span id="logged-total-sugar" class="stat-value">{{ total_sugar }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box micronutrients-colour">
             <p>Total Sodium</p>
             <div class="data">
-              <span id="logged-total-sodium" class="stat-value">0</span
+              <span id="logged-total-sodium" class="stat-value">{{ total_sodium }}</span
               ><span class="unit">mg</span>
             </div>
           </div>
           <div class="stat-box micronutrients-colour">
             <p>Total Potassium</p>
             <div class="data">
-              <span id="logged-total-potassium" class="stat-value">0</span
+              <span id="logged-total-potassium" class="stat-value">{{ total_potassium }}</span
               ><span class="unit">mg</span>
             </div>
           </div>
           <div class="stat-box micronutrients-colour">
             <p>Total Cholesterol</p>
             <div class="data">
-              <span id="logged-total-cholesterol" class="stat-value">0</span
+              <span id="logged-total-cholesterol" class="stat-value">{{ total_cholesterol }}</span
               ><span class="unit">mg</span>
             </div>
           </div>
@@ -86,78 +73,68 @@
           <div class="stat-box amount-colour">
             <p>Average Amount</p>
             <div class="data">
-              <span id="avg-amount" class="stat-value">0</span
+              <span id="avg-amount" class="stat-value">{{ avg_weight }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box fat-colour">
             <p>Average Fat</p>
             <div class="data">
-              <span id="avg-fat" class="stat-value">0</span
+              <span id="avg-fat" class="stat-value">{{ avg_fat }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box fat-colour">
             <p>Average Saturated Fat</p>
             <div class="data">
-              <span id="avg-saturated-fat" class="stat-value">0</span
+              <span id="avg-saturated-fat" class="stat-value">{{ avg_saturated_fat }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box carbs-colour">
             <p>Average Carbs</p>
             <div class="data">
-              <span id="avg-carbs" class="stat-value">0</span
+              <span id="avg-carbs" class="stat-value">{{ avg_carbs }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box carbs-colour">
             <p>Average Fiber</p>
             <div class="data">
-              <span id="avg-fiber" class="stat-value">0</span
+              <span id="avg-fiber" class="stat-value">{{ avg_fiber }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box carbs-colour">
             <p>Average Sugar</p>
             <div class="data">
-              <span id="avg-sugar" class="stat-value">0</span
+              <span id="avg-sugar" class="stat-value">{{ avg_sugar }}</span
               ><span class="unit">g</span>
             </div>
           </div>
           <div class="stat-box micronutrients-colour">
             <p>Average Sodium</p>
             <div class="data">
-              <span id="avg-sodium" class="stat-value">0</span
+              <span id="avg-sodium" class="stat-value">{{ avg_sodium }}</span
               ><span class="unit">mg</span>
             </div>
           </div>
           <div class="stat-box micronutrients-colour">
             <p>Average Potassium</p>
             <div class="data">
-              <span id="avg-potassium" class="stat-value">0</span
+              <span id="avg-potassium" class="stat-value">{{ avg_potassium }}</span
               ><span class="unit">mg</span>
             </div>
           </div>
           <div class="stat-box micronutrients-colour">
             <p>Average Cholesterol</p>
             <div class="data">
-              <span id="avg-cholesterol" class="stat-value">0</span
+              <span id="avg-cholesterol" class="stat-value">{{ avg_cholesterol }}</span
               ><span class="unit">mg</span>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-<section id="logged-meals" class="section">
-  <div class="container">
-    <h2>Logged Meals</h2>
-    <div id="mealList" class="data-list">
-      <p class="no-data-message">
-        No meals logged yet. <a href="{% url 'log-meal'%}">Log one now!</a>
-      </p>
     </div>
   </div>
 </section>

@@ -17,8 +17,9 @@ def auth_view(request):
             form_register = UserRegisterForm(request.POST)
             form_login = UserLoginForm()
             if form_register.is_valid():
-                form_register.save()
+                user = form_register.save()
                 username = form_register.cleaned_data.get('username')
+                login(request, user)
                 messages.success(request, f'Account created for {username}!')
                 return redirect('home')
         else:

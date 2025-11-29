@@ -59,26 +59,18 @@ document.addEventListener("DOMContentLoaded", () => {
     registerTab.classList.toggle("active");
     loginForm.classList.toggle("hidden-form");
     registerForm.classList.toggle("hidden-form");
-
   }
-
-  // Function to clear flash messages
-  // function clearFlashMessages() {
-  //   const successMessages = document.querySelectorAll(".flash");
-  //   successMessages.forEach((element) => {
-  //     element.remove();
-  //   });
-  // }
 
   // Check the URL path to automatically switch to the appropriate form
 
-  if (loginTab){
-      const initialMode = DJANGO_INITIAL_MODE;
-    if(initialMode === '/users/register/') {
-    if (loginForm.classList.contains("hidden-form") === false) {
-      formSwitcher();
+  if (loginTab) {
+    const initialMode = DJANGO_INITIAL_MODE;
+    if (initialMode === "/users/register/") {
+      if (loginForm.classList.contains("hidden-form") === false) {
+        formSwitcher();
+      }
     }
-  }}
+  }
 
   // Account page
   // Referencing items
@@ -464,8 +456,131 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     const mealDataInput = document.getElementById("mealData");
 
-    // Function to add field in form
+    if (window.isUpdateMode && window.existingIngredientsData) {
+      console.log("Update mode detected, prepopulating form...");
 
+      // Function to prepopulate the nutrition table with existing data
+      function prepopulateNutritionTable(ingredientsData) {
+        let totalWeight = 0,
+          totalFatTotal = 0,
+          totalFatSaturated = 0,
+          totalCarbohydratesTotal = 0,
+          totalFiber = 0,
+          totalSugar = 0,
+          totalSodium = 0,
+          totalPotassium = 0,
+          totalCholesterol = 0;
+
+        nutritionTable.innerHTML = "";
+
+        ingredientsData.forEach((ingredient) => {
+          const newRow = document.createElement("tr");
+
+          newRow.innerHTML = `
+        <td>${
+          ingredient.name.charAt(0).toUpperCase() + ingredient.name.slice(1)
+        }</td>
+        <td>${ingredient.weight.toFixed(1)}</td>
+        <td>${ingredient.fat_total_g.toFixed(1)}</td>
+        <td>${ingredient.fat_saturated_g.toFixed(1)}</td>
+        <td>${ingredient.carbohydrates_total_g.toFixed(1)}</td>
+        <td>${ingredient.fiber_g.toFixed(1)}</td>
+        <td>${ingredient.sugar_g.toFixed(1)}</td>
+        <td>${ingredient.sodium_mg.toFixed(1)}</td>
+        <td>${ingredient.potassium_mg.toFixed(1)}</td>
+        <td>${ingredient.cholesterol_mg.toFixed(1)}</td>
+      `;
+          nutritionTable.appendChild(newRow);
+
+          totalWeight += ingredient.weight;
+          totalFatTotal += ingredient.fat_total_g;
+          totalFatSaturated += ingredient.fat_saturated_g;
+          totalCarbohydratesTotal += ingredient.carbohydrates_total_g;
+          totalFiber += ingredient.fiber_g;
+          totalSugar += ingredient.sugar_g;
+          totalSodium += ingredient.sodium_mg;
+          totalPotassium += ingredient.potassium_mg;
+          totalCholesterol += ingredient.cholesterol_mg;
+        });
+
+        const totalRow = document.createElement("tr");
+        totalRow.innerHTML = `
+      <td><strong>Total</strong></td>
+      <td><strong>${totalWeight.toFixed(1)}</strong></td>
+      <td><strong>${totalFatTotal.toFixed(1)}</strong></td>
+      <td><strong>${totalFatSaturated.toFixed(1)}</strong></td>
+      <td><strong>${totalCarbohydratesTotal.toFixed(1)}</strong></td>
+      <td><strong>${totalFiber.toFixed(1)}</strong></td>
+      <td><strong>${totalSugar.toFixed(1)}</strong></td>
+      <td><strong>${totalSodium.toFixed(1)}</strong></td>
+      <td><strong>${totalPotassium.toFixed(1)}</strong></td>
+      <td><strong>${totalCholesterol.toFixed(1)}</strong></td>
+    `;
+        nutritionTable.appendChild(totalRow);
+
+        nutritionTableContainer.style.display = "block";
+        logMealButton.style.display = "block";
+      }
+
+      // Function to prepopulate food input fields
+      function prepopulateFoodFields(ingredientsData) {
+        const container = document.getElementById("foodEntriesContainer");
+
+        // Clear existing rows except the first one
+        const allRows = container.querySelectorAll(".form-entry-row");
+        for (let i = 1; i < allRows.length; i++) {
+          allRows[i].remove();
+        }
+
+        // Populate first row with first ingredient
+        if (ingredientsData.length > 0) {
+          document.getElementById("foodName1").value = ingredientsData[0].name;
+          document.getElementById("foodQuantity1").value =
+            ingredientsData[0].weight;
+        }
+
+        // Add additional rows for remaining ingredients
+        for (let i = 1; i < ingredientsData.length; i++) {
+          const currentRowCount = i + 1;
+          const newRow = document.createElement("div");
+          newRow.classList.add("form-entry-row");
+          newRow.innerHTML = `
+        <div class="form-group">
+          <label for="foodName${currentRowCount}">Food Name</label>
+          <input 
+            type="text" 
+            id="foodName${currentRowCount}" 
+            name="foodName[]" 
+            placeholder="e.g., Apple" 
+            value="${ingredientsData[i].name}"
+            required
+          >
+        </div>
+        <div class="form-group food-quantity-group">
+          <label for="foodQuantity${currentRowCount}">Quantity (g)</label>
+          <input 
+            type="number" 
+            id="foodQuantity${currentRowCount}" 
+            name="foodQuantity[]" 
+            placeholder="e.g., 100" 
+            value="${ingredientsData[i].weight}"
+            min="1"
+          >
+        </div>
+        <button type="button" class="remove-item-button">-</button>
+      `;
+          container.appendChild(newRow);
+        }
+      }
+
+      // Execute prepopulation
+      prepopulateFoodFields(window.existingIngredientsData);
+      prepopulateNutritionTable(window.existingIngredientsData);
+
+      console.log("Form prepopulated successfully");
+    }
+
+    // Function to add field in form
     function addFoodField() {
       const container = document.getElementById("foodEntriesContainer");
       const allRows = container.querySelectorAll(".form-entry-row");
@@ -483,25 +598,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const newRow = document.createElement("div");
       newRow.classList.add("form-entry-row");
       newRow.innerHTML = `
-        <div class="form-group">
-            <label for="foodName${currentRowCount}">Food Name</label>
-            <input type="text" id="foodName${currentRowCount}" name="foodName[]" placeholder="e.g., Apple" required>
-        </div>
-        <div class="form-group food-quantity-group">
-            <label for="foodQuantity${currentRowCount}">Quantity (g)</label>
-            <input type="number" id="foodQuantity${currentRowCount}" name="foodQuantity[]" placeholder="e.g., 100" min="1">
-        </div>
-        <button type="button" class="remove-item-button">-</button>
-      `;
+      <div class="form-group">
+          <label for="foodName${currentRowCount}">Food Name</label>
+          <input type="text" id="foodName${currentRowCount}" name="foodName[]" placeholder="e.g., Apple" required>
+      </div>
+      <div class="form-group food-quantity-group">
+          <label for="foodQuantity${currentRowCount}">Quantity (g)</label>
+          <input type="number" id="foodQuantity${currentRowCount}" name="foodQuantity[]" placeholder="e.g., 100" min="1">
+      </div>
+      <button type="button" class="remove-item-button">-</button>
+    `;
       container.appendChild(newRow);
     }
 
     // Attach the add field function to the '+' button
-
     addFoodItemBtn.addEventListener("click", addFoodField);
 
     // Event delegation for removing items
-
     foodEntriesContainer.addEventListener("click", function (event) {
       if (event.target.classList.contains("remove-item-button")) {
         event.target.closest(".form-entry-row").remove();
@@ -509,7 +622,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Function to call the Ninja API Nutrition
-
     async function runNutritionAPI() {
       const APIKey = "vcfVfXLPlqLa8X0Uc6N6Pw==bG86tqJp6i5Q8qv6";
       const foodNameInputs = document.querySelectorAll(
@@ -542,7 +654,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Function to populate the table with the nutrition data
-
     function populateNutrientTable(allResults) {
       let totalAmount = 0,
         totalFatTotal = 0,
@@ -574,17 +685,17 @@ document.addEventListener("DOMContentLoaded", () => {
         let cholesterol = res.result.cholesterol_mg * multiplier;
 
         newRow.innerHTML = `
-                <td>${name.charAt(0).toUpperCase() + name.slice(1)}</td>
-                <td>${amount.toFixed(1)}</td>
-                <td>${fatTotal.toFixed(1)}</td>
-                <td>${fatSaturated.toFixed(1)}</td>
-                <td>${carbohydratesTotal.toFixed(1)}</td>
-                <td>${fiber.toFixed(1)}</td>
-                <td>${sugar.toFixed(1)}</td>
-                <td>${sodium.toFixed(1)}</td>
-                <td>${potassium.toFixed(1)}</td>
-                <td>${cholesterol.toFixed(1)}</td>      
-            `;
+              <td>${name.charAt(0).toUpperCase() + name.slice(1)}</td>
+              <td>${amount.toFixed(1)}</td>
+              <td>${fatTotal.toFixed(1)}</td>
+              <td>${fatSaturated.toFixed(1)}</td>
+              <td>${carbohydratesTotal.toFixed(1)}</td>
+              <td>${fiber.toFixed(1)}</td>
+              <td>${sugar.toFixed(1)}</td>
+              <td>${sodium.toFixed(1)}</td>
+              <td>${potassium.toFixed(1)}</td>
+              <td>${cholesterol.toFixed(1)}</td>      
+          `;
         nutritionTable.appendChild(newRow);
 
         totalAmount += amount;
@@ -600,23 +711,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const totalRow = document.createElement("tr");
       totalRow.innerHTML = `
-            <td><strong>Total</strong></td>
-            <td><strong>${totalAmount.toFixed(1)}</strong></td>
-            <td><strong>${totalFatTotal.toFixed(1)}</strong></td>
-            <td><strong>${totalFatSaturated.toFixed(1)}</strong></td>
-            <td><strong>${totalCarbohydratesTotal.toFixed(1)}</strong></td>
-            <td><strong>${totalFiber.toFixed(1)}</strong></td>
-            <td><strong>${totalSugar.toFixed(1)}</strong></td>
-            <td><strong>${totalSodium.toFixed(1)}</strong></td>
-            <td><strong>${totalPotassium.toFixed(1)}</strong></td>
-            <td><strong>${totalCholesterol.toFixed(1)}</strong></td>      
-        `;
+          <td><strong>Total</strong></td>
+          <td><strong>${totalAmount.toFixed(1)}</strong></td>
+          <td><strong>${totalFatTotal.toFixed(1)}</strong></td>
+          <td><strong>${totalFatSaturated.toFixed(1)}</strong></td>
+          <td><strong>${totalCarbohydratesTotal.toFixed(1)}</strong></td>
+          <td><strong>${totalFiber.toFixed(1)}</strong></td>
+          <td><strong>${totalSugar.toFixed(1)}</strong></td>
+          <td><strong>${totalSodium.toFixed(1)}</strong></td>
+          <td><strong>${totalPotassium.toFixed(1)}</strong></td>
+          <td><strong>${totalCholesterol.toFixed(1)}</strong></td>      
+      `;
       nutritionTable.appendChild(totalRow);
       nutritionTableContainer.style.display = "block";
     }
 
     // Function to display Meal table
-
     async function getNutritionalData() {
       spinningLoader.style.display = "block";
       try {
@@ -638,47 +748,46 @@ document.addEventListener("DOMContentLoaded", () => {
       const tableRows = nutritionTable.querySelectorAll("tr");
 
       const foodItems = [];
+      // Loop through all rows EXCEPT the last one (which is the total row)
       for (let i = 0; i < tableRows.length - 1; i++) {
         const cells = tableRows[i].querySelectorAll("td");
         foodItems.push({
           name: cells[0].textContent,
-          amount: cells[1].textContent,
-          fat_total_g: cells[2].textContent,
-          fat_saturated_g: cells[3].textContent,
-          carbohydrates_total_g: cells[4].textContent,
-          fiber_g: cells[5].textContent,
-          sugar_g: cells[6].textContent,
-          sodium_mg: cells[7].textContent,
-          potassium_mg: cells[8].textContent,
-          cholesterol_mg: cells[9].textContent,
+          weight: parseFloat(cells[1].textContent),
+          fat_total_g: parseFloat(cells[2].textContent),
+          fat_saturated_g: parseFloat(cells[3].textContent),
+          carbohydrates_total_g: parseFloat(cells[4].textContent),
+          fiber_g: parseFloat(cells[5].textContent),
+          sugar_g: parseFloat(cells[6].textContent),
+          sodium_mg: parseFloat(cells[7].textContent),
+          potassium_mg: parseFloat(cells[8].textContent),
+          cholesterol_mg: parseFloat(cells[9].textContent),
         });
       }
 
+      // Get the total row (last row)
       const totalCells =
         tableRows[tableRows.length - 1].querySelectorAll("td, th");
       const totalNutrients = {
-        amount: totalCells[1].textContent,
-        fat_total_g: totalCells[2].textContent,
-        fat_saturated_g: totalCells[3].textContent,
-        carbohydrates_total_g: totalCells[4].textContent,
-        fiber_g: totalCells[5].textContent,
-        sugar_g: totalCells[6].textContent,
-        sodium_mg: totalCells[7].textContent,
-        potassium_mg: totalCells[8].textContent,
-        cholesterol_mg: totalCells[9].textContent,
+        weight: parseFloat(totalCells[1].textContent),
+        fat_total_g: parseFloat(totalCells[2].textContent),
+        fat_saturated_g: parseFloat(totalCells[3].textContent),
+        carbohydrates_total_g: parseFloat(totalCells[4].textContent),
+        fiber_g: parseFloat(totalCells[5].textContent),
+        sugar_g: parseFloat(totalCells[6].textContent),
+        sodium_mg: parseFloat(totalCells[7].textContent),
+        potassium_mg: parseFloat(totalCells[8].textContent),
+        cholesterol_mg: parseFloat(totalCells[9].textContent),
       };
 
+      // Create the data object with the structure Django expects
       const mealDataObject = {
-        name: mealNameInput.value || "Unnamed Meal",
-        date: new Date().toLocaleDateString("en-GB", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }),
-        totalNutrients: totalNutrients,
+        meal_name: mealNameInput.value || "Unnamed Meal",
+        totals: totalNutrients,
         items: foodItems,
       };
 
+      console.log("Submitting meal data:", mealDataObject);
       mealDataInput.value = JSON.stringify(mealDataObject);
     });
   }
@@ -1432,4 +1541,363 @@ document.addEventListener("DOMContentLoaded", () => {
     updateMood(0);
     animate();
   }
+
+  // List Pages
+(function() {
+  const deleteButtons = document.querySelectorAll('.deleteBtn');
+  
+  if (deleteButtons.length > 0) {
+    // Function to show a popup form and prevent background scrolling
+    function showPopupForm(popupForm) {
+      if (popupForm) {
+        popupForm.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    // Function to hide popup form and re-enable scrolling
+    function hidePopupForm(popupForm) {
+      if (popupForm) {
+        popupForm.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    // Add click event to each delete button
+    deleteButtons.forEach((button) => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Check for meal-id, mood-id or workout-id attributes
+        const itemId = this.getAttribute('data-meal-id') || this.getAttribute('data-mood-id') || this.getAttribute('data-workout-id');
+        const popupForm = document.getElementById(`deleteItem-${itemId}`);
+        showPopupForm(popupForm);
+      });
+    });
+
+    // Add click event to all close buttons
+    const closeBtns = document.querySelectorAll('.close-button');
+    closeBtns.forEach((btn) => {
+      btn.addEventListener('click', function() {
+        const popupForm = this.closest('.popup-form');
+        hidePopupForm(popupForm);
+      });
+    });
+
+    // Close popup when clicking outside of form content
+    window.addEventListener('click', function(event) {
+      if (event.target.classList.contains('popup-form')) {
+        hidePopupForm(event.target);
+      }
+    });
+  }
+})();
+(function() {
+  const editButtons = document.querySelectorAll('.editBtn');
+  
+  if (editButtons.length > 0) {
+    // Function to show a popup form and prevent background scrolling
+    function showPopupForm(popupForm) {
+      if (popupForm) {
+        popupForm.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    // Function to hide popup form and re-enable scrolling
+    function hidePopupForm(popupForm) {
+      if (popupForm) {
+        popupForm.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        // Remove the popup from DOM after hiding
+        popupForm.remove();
+      }
+    }
+
+    // Function to initialize mood slider logic
+    function initializeMoodSlider(initialMoodValue) {
+      const container = document.getElementById("moodContainer");
+      const display = document.getElementById("moodRatingDisplay");
+      const input = document.getElementById("moodRating");
+      const label = document.getElementById("moodLabel");
+      const highlight = document.getElementById("moodHighlight");
+
+      if (!container || !display || !input || !label || !highlight) {
+        console.error('Mood elements not found');
+        return;
+      }
+
+      let isLocked = false;
+      const containerRadius = container.offsetWidth / 2;
+
+      const moodLabels = [
+        "Terrible",
+        "Bad",
+        "Bored",
+        "Tired",
+        "Neutral",
+        "Fine",
+        "Good",
+        "Great",
+        "Awesome",
+        "Excellent",
+      ];
+
+      let targetDistance = 0;
+
+      // Function to 'interpolate' between two colors
+      function lerpColor(color1, color2, factor) {
+        const hexToRgb = (hex) => hex.match(/\w\w/g).map((x) => parseInt(x, 16));
+        const rgbToHex = (r, g, b) =>
+          "#" +
+          [r, g, b]
+            .map((x) => Math.round(x).toString(16).padStart(2, "0"))
+            .join("");
+
+        const [r1, g1, b1] = hexToRgb(color1);
+        const [r2, g2, b2] = hexToRgb(color2);
+
+        const r = r1 + factor * (r2 - r1);
+        const g = g1 + factor * (g2 - g1);
+        const b = b1 + factor * (b2 - b1);
+
+        return rgbToHex(r, g, b);
+      }
+
+      // Function to get the correct color from the gradient based on distance
+      function getColorFromGradient(distance) {
+        const red = "#ef4444";
+        const purple = "#8b5cf6";
+        const blue = "#3b82f6";
+        const green = "#22c55e";
+
+        const percentage = distance / containerRadius;
+        let color;
+        if (percentage <= 0.3) {
+          // Red to Purple
+          color = lerpColor(red, purple, percentage / 0.3);
+        } else if (percentage <= 0.5) {
+          // Purple to Blue
+          color = lerpColor(purple, blue, (percentage - 0.3) / 0.2);
+        } else {
+          // Blue to Green
+          color = lerpColor(blue, green, (percentage - 0.5) / 0.5);
+        }
+        return color;
+      }
+
+      // Function to update the mood display and highlight
+      function updateMood(distance) {
+        let percentage = distance / containerRadius;
+        let rating = Math.max(1, Math.min(10, Math.ceil(10 * percentage)));
+
+        display.textContent = rating;
+        input.value = rating;
+        label.textContent = moodLabels[rating - 1];
+
+        const selectedColor = getColorFromGradient(distance);
+
+        highlight.style.borderColor = selectedColor;
+        highlight.style.width = `${distance * 2}px`;
+        highlight.style.height = `${distance * 2}px`;
+      }
+
+      // Animation loop for smoother tracking
+      function animate() {
+        // Smoothly interpolate towards the target distance
+        let currentDistance = parseFloat(highlight.style.width) / 2 || 0;
+        let newDistance =
+          currentDistance + (targetDistance - currentDistance) * 0.2;
+        updateMood(newDistance);
+
+        requestAnimationFrame(animate);
+      }
+
+      container.addEventListener("mousemove", (e) => {
+        if (isLocked) return;
+        const rect = container.getBoundingClientRect();
+        const centerX = rect.left + containerRadius;
+        const centerY = rect.top + containerRadius;
+
+        const dx = e.clientX - centerX;
+        const dy = e.clientY - centerY;
+
+        targetDistance = Math.min(containerRadius, Math.sqrt(dx * dx + dy * dy));
+      });
+
+      container.addEventListener("mouseleave", () => {
+        if (isLocked) return;
+        // Don't reset if we have an initial value and haven't interacted yet
+        if (initialMoodValue && !isLocked) {
+          return;
+        }
+        targetDistance = 0;
+        display.textContent = "";
+        label.textContent = "";
+      });
+
+      container.addEventListener("click", () => {
+        isLocked = !isLocked;
+        if (!isLocked) {
+          // If unlocked, reset the state
+          targetDistance = 0;
+          display.textContent = "";
+          label.textContent = "";
+        }
+      });
+
+      // Initialize with existing mood value if editing
+      if (initialMoodValue) {
+        const percentage = initialMoodValue / 10;
+        targetDistance = percentage * containerRadius;
+        updateMood(targetDistance);
+        isLocked = true; // Start locked with the existing value visible
+      } else {
+        display.textContent = "";
+        label.textContent = "";
+        updateMood(0);
+      }
+      
+      animate();
+    }
+
+    // Function to create and insert edit popup
+    function createEditPopup(moodId, moodValue, moodNotes, updateUrl, csrfToken) {
+      // Remove any existing edit popup first
+      const existingPopup = document.getElementById('editMoodPopup');
+      if (existingPopup) {
+        existingPopup.remove();
+      }
+
+      const popupHTML = `
+        <div id="editMoodPopup" class="popup-form" style="display: flex;">
+          <div class="form-content">
+            <span class="close-button">&times;</span>
+            <div class="container">
+              <form
+                class="data-form"
+                id="moodForm"
+                method="POST"
+                action="${updateUrl}"
+              >
+                <input type="hidden" name="csrfmiddlewaretoken" value="${csrfToken}">
+                <input
+                  type="hidden"
+                  id="moodRating"
+                  name="mood"
+                  value="${moodValue}"
+                />
+                <div class="form-group centered">
+                  <div class="mood-container" id="moodContainer">
+                    <div id="moodHighlight" class="mood-highlight"></div>
+                  </div>
+                </div>
+                <div id="moodInfo">
+                  <p id="moodRatingDisplay">${moodValue}</p>
+                  <span id="moodLabel"></span>
+                </div>
+                <div class="form-group">
+                  <label for="notes">Notes about your day:</label>
+                  <textarea id="notes" name="notes" rows="4">${moodNotes || ''}</textarea>
+                </div>
+                <button type="submit" class="button">Update Mood</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Insert popup into body
+      document.body.insertAdjacentHTML('beforeend', popupHTML);
+      
+      const popup = document.getElementById('editMoodPopup');
+      
+      // Add close button event
+      const closeBtn = popup.querySelector('.close-button');
+      closeBtn.addEventListener('click', function() {
+        hidePopupForm(popup);
+      });
+
+      // Close when clicking outside
+      popup.addEventListener('click', function(event) {
+        if (event.target === popup) {
+          hidePopupForm(popup);
+        }
+      });
+
+      showPopupForm(popup);
+      
+      // Initialize mood slider with the existing value
+      setTimeout(() => {
+        initializeMoodSlider(parseInt(moodValue));
+      }, 100); // Small delay to ensure DOM is ready
+    }
+
+    // Add click event to each edit button
+    editButtons.forEach((button) => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Get mood data from data attributes
+        const moodValue = this.getAttribute('data-mood-value');
+        const moodNotes = this.getAttribute('data-mood-notes');
+        const updateUrl = this.getAttribute('data-update-url');
+        
+        // Get CSRF token from the page
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+        
+        createEditPopup(null, moodValue, moodNotes, updateUrl, csrfToken);
+      });
+    });
+  }
+})();
+
+// Workout Update Popup
+(function() {
+  const editButtons = document.querySelectorAll('.editBtnWrk');
+  
+  if (editButtons.length > 0) {
+    function showPopupForm(popupForm) {
+      if (popupForm) {
+        popupForm.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function hidePopupForm(popupForm) {
+      if (popupForm) {
+        popupForm.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    editButtons.forEach((button) => {
+      button.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const deleteBtn = this.closest('.actions').querySelector('.deleteBtn');
+        const workoutId = deleteBtn.getAttribute('data-workout-id');
+        const popupForm = document.getElementById(`updateItem-${workoutId}`);
+        showPopupForm(popupForm);
+      });
+    });
+
+    const closeBtns = document.querySelectorAll('.close-button');
+    closeBtns.forEach((btn) => {
+      btn.addEventListener('click', function() {
+        const popupForm = this.closest('.popup-form');
+        hidePopupForm(popupForm);
+      });
+    });
+
+    window.addEventListener('click', function(event) {
+      if (event.target.classList.contains('popup-form')) {
+        hidePopupForm(event.target);
+      }
+    });
+  }
+})();
 });

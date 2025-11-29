@@ -131,3 +131,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
+
+INSTALLED_APPS += ["anymail"]
+EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
+DEFAULT_FROM_EMAIL = "alexis.sammut26@gmail.com"
+
+ANYMAIL = {
+    "SENDGRID_API_KEY":'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'
+}
+
+ANYMAIL_IGNORE_UNSUPPORTED_FEATURES = False

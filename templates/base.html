@@ -31,6 +31,14 @@
               </ul>
             </li>
             <li class="has-submenu">
+              <a href="#">View</a>
+              <ul class="submenu">
+                <li><a href="{% url 'workouts-list' %}">All Workouts</a></li>
+                <li><a href="{% url 'meals-list' %}">All Meals</a></li>
+                <li><a href="{% url 'moods-list' %}">All Moods</a></li>
+              </ul>
+            </li>
+            <li class="has-submenu">
               <a href="#">Review Progress</a>
               <ul class="submenu">
                 <li><a href="{% url 'review-workouts' %}">Review Workouts</a></li>

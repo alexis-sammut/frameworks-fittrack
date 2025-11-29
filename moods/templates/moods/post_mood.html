@@ -1,0 +1,25 @@
+{% extends "base.html" %} {% block main %}
+<section id="log-mood" class="section">
+  <div class="container">
+    <h2>Log Your Mood</h2>
+    <form class="data-form" id="moodForm" method="POST">
+      {% csrf_token %}
+      <input type="hidden" id="moodRating" name="mood" />
+      <div class="form-group centered">
+        <div class="mood-container" id="moodContainer">
+          <div id="moodHighlight" class="mood-highlight"></div>
+        </div>
+      </div>
+      <div id="moodInfo">
+        <p id="moodRatingDisplay"></p>
+        <span id="moodLabel"></span>
+      </div>
+      <div class="form-group">
+        <label for="notes">Notes about your day:</label>
+        <textarea id="notes" name="notes" rows="4"></textarea>
+      </div>
+      <button type="submit" class="button">Log Mood</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

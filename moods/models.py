@@ -1,14 +1,11 @@
 from django.db import models
 from django.utils import timezone
-
+from django.urls import reverse
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 class Mood(models.Model):
-    """
-    Represents a single logged mood entry by a user.
-    """
-    
     user = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
@@ -17,8 +14,7 @@ class Mood(models.Model):
     )
     date = models.DateField(
         default=timezone.now,
-        unique=True, # Ensures only one mood log per user per day
-        help_text="Date the mood was logged (must be unique for the user)."
+        help_text="Date the mood was logged."
     )
     mood = models.IntegerField(
         help_text="The logged mood, on a scale from 1 to 10."
@@ -29,12 +25,13 @@ class Mood(models.Model):
         help_text="Optional notes on the mood."
     )
     
-    # class Meta:
-    #     db_table = 'moods_logged'
-    #     ordering = ['-date']
-    #     # Adding a unique_together constraint to enforce uniqueness per user AND date
-    #     unique_together = ('user', 'date')
+    class Meta:
+        db_table = 'mood'
+        ordering = ['-date']
+        unique_together = ('user', 'date')  # One mood per user per day
 
     def __str__(self):
-        """String representation for the Django Admin."""
         return f"Mood {self.mood} for {self.user.username} on {self.date.strftime('%d-%m-%Y')}"
+    
+    def get_absolute_url(self):
+        return reverse('mood-detail', kwargs={'pk': self.pk})

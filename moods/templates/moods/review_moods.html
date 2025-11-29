@@ -1,15 +1,4 @@
-{% extends "base.html" %} {% block main %} {% if not user %}
-
-<div class="logout-banner">
-  You're not currently logged in. Any logged mood will be stored temporarily
-  only. If you wish to keep data logged, please
-  {% comment %} <a href="{{ url_for('authentification') }}">log in or create an account</a> {% endcomment %}
-  first.
-</div>
-{% endif %}
-<script id="review_moods">
-  {% comment %} const moodsData = {{ moods | tojson }}; {% endcomment %}
-</script>
+{% extends "base.html" %} {% block main %}
 <section id="stats-overview" class="section">
   <div class="container">
     <h2 class="review-headers">Moods</h2>
@@ -18,24 +7,14 @@
         <div class="stats-grid">
           <div class="stat-box mood-colour">
             <p>Average Mood</p>
-            <span id="avg-mood" class="stat-value">0</span>
+            <span id="avg-mood" class="stat-value">{{ avg_mood }}</span>
           </div>
           <div class="stat-box session-colour">
             <p>Moods Logged</p>
-            <span id="total-moods" class="stat-value">0</span>
+            <span id="total-moods" class="stat-value">{{ total_moods }}</span>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</section>
-<section id="logged-moods" class="section">
-  <div class="container">
-    <h2 class="review-headers">Logged Moods</h2>
-    <div id="moodList" class="data-list">
-      <p class="no-data-message">
-        No moods logged yet. <a href="{% url 'log-mood'%}">Log one now!</a>
-      </p>
     </div>
   </div>
 </section>

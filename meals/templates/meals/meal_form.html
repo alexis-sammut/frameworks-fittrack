@@ -1,21 +1,23 @@
-{% extends "base.html" %} {% block main %} {% if not user %}
-<div class="logout-banner">
-  You're not currently logged in. Any logged meal will be stored temporarily
-  only. If you wish to keep data logged, please
-  {% comment %} <a href="{{ url_for('authentification') }}">log in or create an account</a> {% endcomment %}
-  first.
-</div>
-{% endif %}
+{% extends "base.html" %} 
+
+{% block main %}
 <section id="log-meal" class="section">
   <div class="container">
-    <h2>Log Your Meal</h2>
+    <h2>{% if is_update %}Update{% else %}Log{% endif %} Your Meal</h2>
+    
+    {% if error %}
+    <div class="error-message">{{ error }}</div>
+    {% endif %}
+    
     <form
       class="data-form"
       id="mealForm"
-      {% comment %} action="{{ url_for('log_meal') }}" {% endcomment %}
+      action="{% if is_update %}{% url 'meal-update' meal.pk %}{% else %}{% url 'log-meal' %}{% endif %}"
       method="POST"
     >
+      {% csrf_token %}
       <input type="hidden" name="mealData" id="mealData" />
+      
       <div id="foodEntriesContainer">
         <div class="form-entry-row">
           <div class="form-group">
@@ -25,6 +27,7 @@
               id="meal-name"
               name="meal-name"
               placeholder="e.g, Lunch"
+              value="{% if is_update %}{{ meal.name }}{% endif %}"
               required
             />
             <label for="foodName1">Food Name</label>
@@ -48,27 +51,24 @@
           </div>
         </div>
       </div>
+      
       <p id="addFieldError"></p>
-      <button type="button" class="add-item-button" id="addFoodItemBtn">
-        +
-      </button>
+      <button type="button" class="add-item-button" id="addFoodItemBtn">+</button>
+      
       <div class="nutrition-results">
         <div class="nutrition-details"></div>
       </div>
 
       <div class="form-group">
-        <button
-          type="button"
-          id="getNutritionButton"
-          class="button secondary-button"
-        >
+        <button type="button" id="getNutritionButton" class="button secondary-button">
           Get Nutritional Data
         </button>
         <button type="button" id="resetForm" class="button secondary-button">
           Reset Form
         </button>
         <div id="loader" class="spinner"></div>
-        <div id="nutritionTableContainer" class="table-responsive-container">
+        
+        <div id="nutritionTableContainer" class="table-responsive-container" {% if not is_update %}style="display: none;"{% endif %}>
           <h3>Nutrition Summary</h3>
           <table class="nutrition-table">
             <thead>
@@ -86,30 +86,34 @@
               </tr>
             </thead>
             <tbody id="nutritionTable">
-              <tr class="total-row">
-                <td>Total</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
+              <!-- Data will be populated here by JavaScript -->
             </tbody>
           </table>
         </div>
+        
         <button
           id="logMealButton"
           type="submit"
           class="button"
-          style="display: none"
+          {% if not is_update %}style="display: none"{% endif %}
         >
-          Log Meal
+          {% if is_update %}Update{% else %}Log{% endif %} Meal
         </button>
       </div>
     </form>
+    
+    {% if is_update %}
+    <a href="{% url 'meal-detail' meal.pk %}" class="button secondary-button">Cancel</a>
+    {% endif %}
   </div>
 </section>
+
+{% if is_update %}
+<script>
+  // Pass the ingredients data to JavaScript
+  window.existingIngredientsData = {{ ingredients_json|safe }};
+  window.isUpdateMode = true;
+</script>
+{% endif %}
+
 {% endblock %}

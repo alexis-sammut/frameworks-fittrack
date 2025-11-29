@@ -187,6 +187,31 @@ main {
   box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
 }
 
+.small-button {
+  display: inline-block;
+  background-color: #2ecc71;
+  color: #fff;
+  /* Reduced padding to make the button smaller */
+  padding: 8px 20px; 
+  text-decoration: none;
+  border-radius: 50px;
+  transition: background-color 0.3s ease, transform 0.2s ease,
+    box-shadow 0.3s ease;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  /* Reduced font size for a smaller look */
+  font-size: 0.9rem; 
+  margin: 10px 10px;
+  box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);
+}
+
+.small-button:hover {
+  background-color: #27ae60;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(46, 204, 113, 0.4);
+}
+
 .secondary-button {
   background-color: #f39c12;
   box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3);
@@ -384,11 +409,11 @@ main {
 
 .form-content {
   background-color: #fff;
-  padding: 24px;
+  padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  width: 80%;
-  max-width: 400px;
+  width: 90%;
+  max-width: 420px;
   position: relative;
 }
 
@@ -861,6 +886,172 @@ align-items: center
   max-width: 400px;
 }
 
+/* List pages */
+.list-item {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.list-item:hover {
+  transform: translateY(-4px);
+}
+
+.list-item-link {
+  text-decoration: none;
+  color: inherit;          
+  display: block;   
+}
+
+.list-item-header {
+  position: relative;
+  padding-right: 80px; 
+}
+
+.list-item-name {
+  display: block;         /* puts date on next line */
+  font-size: 1.3rem;      /* larger text for the name */
+  font-weight: 600;       /* semi-bold */
+  color: #222;            /* dark text */
+}
+
+.list-item-date {
+  display: block;         /* ensures it sits below name */
+  font-size: 0.9rem;      /* smaller text */
+  color: #666;            /* lighter gray for subtle look */
+  margin: 2px;  
+  margin-bottom: 5px;      /* small spacing below name */
+}
+
+.actions {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 6px;
+}
+
+.actions img {
+  width: 35px;
+  height: 35px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+}
+
+.popup-form .mood-container {
+  width: 220px;
+  height: 220px;
+}
+
+.popup-form #moodInfo {
+  font-size: 1rem;
+}
+
+.popup-form textarea#notes {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+}
+
+/* Details Pages */
+
+.detail-navigation {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-actions {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.detail-navigation a {
+  text-decoration: none; 
+  color: inherit; 
+}
+
+.detail-navigation a,
+.detail-navigation span {
+  font-size: 2rem; 
+  font-weight: bold;
+  line-height: 1; 
+  transition: opacity 0.3s ease, font-weight 0.3s ease;
+}
+
+.detail-navigation .disabled {
+  opacity: 0.3; 
+  font-weight: normal;
+  cursor: default; 
+  pointer-events: none; 
+}
+
+.detail-navigation img {
+  width: 35px;
+  height: 35px;
+  display: block; 
+}
+
+.mood-display {
+  padding: 20px 0;
+  text-align: center;
+}
+
+.mood-bar-container {
+  width: 90%;
+  max-width: 400px;
+  height: 30px;
+  background-color: #ecf0f1;
+  border-radius: 15px;
+  overflow: hidden;
+  margin: 10px auto;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.mood-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #3498db, #2ecc71); 
+  border-radius: 15px 0 0 15px;
+  transition: width 1.0s ease-out;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 10px;
+  box-sizing: border-box;
+}
+
+.mood-value {
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.mood-bar-container[data-low-value="true"] .mood-value {
+    position: absolute;
+    right: -30px; 
+    color: #333;
+}
 
 /* Contact Page */
 .form-intro {

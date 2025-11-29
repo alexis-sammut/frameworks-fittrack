@@ -1,3 +1,181 @@
 {% extends "base.html" %} {% block main %}
-    {{ workout.workout_type }}
+<div class="detail-actions">
+  <a href="{% url 'workouts-list' %}" class="small-button secondary-button"
+    >&#x2190; Back to Workouts
+  </a>
+</div>
+<section class="section">
+  <div class="container">
+    <div class="detail-item">
+      <div class="list-item-header">
+        <span class="list-item-name">{{ workout.workout_type|capfirst }}</span>
+        <span class="list-item-date">{{ workout.date }}</span>
+
+        <div class="actions">
+          <a href="{% url 'workout-update' workout.pk %}" class="editBtnWrk">
+            <img src="/static/images/edit.png" alt="Edit information Icon" />
+          </a>
+          <img
+            src="/static/images/delete.png"
+            alt="Delete Workout Icon"
+            class="deleteBtn"
+            data-workout-id="{{ workout.pk }}"
+            data-workout-name="{{ workout.workout_type|capfirst }}"
+          />
+        </div>
+      </div>
+      <div class="detail-section">
+        <h3>Workout Summary</h3>
+        <div class="stats-grid-meal">
+          <div class="stat-box amount-colour">
+            <p>Duration</p>
+            <div class="data">
+              <span class="stat-value">{{ workout.duration }}</span>
+              <span class="unit">min</span>
+            </div>
+          </div>
+
+          {% if workout.distance %}
+          <div class="stat-box fat-colour">
+            <p>Distance</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ workout.distance|floatformat:1 }}</span
+              >
+              <span class="unit">km</span>
+            </div>
+          </div>
+          {% endif %} {% if workout.pace %}
+          <div class="stat-box carbs-colour">
+            <p>Pace</p>
+            <div class="data">
+              <span class="stat-value">{{ workout.pace|floatformat:1 }}</span>
+              <span class="unit">min/km</span>
+            </div>
+          </div>
+          {% endif %} {% if workout.intensity %}
+          <div class="stat-box micronutrients-colour">
+            <p>Intensity</p>
+            <div class="data">
+              <span class="stat-value">{{ workout.intensity|capfirst }}</span>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="stat-box fat-colour">
+            <p>Calories Burned</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ workout.calories|floatformat:0 }}</span
+              >
+              <span class="unit">kcal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="detail-navigation">
+  {% if previous_workout %}
+  <a href="{% url 'workout-detail' previous_workout.pk %}"> &lt; </a>
+  {% else %}
+  <span class="disabled">&lt;</span>
+  {% endif %}
+
+  <a href="{% url 'log-workout'%}">
+    <img src="/static/images/add.png" alt="Add icon" />
+  </a>
+
+  {% if next_workout %}
+  <a href="{% url 'workout-detail' next_workout.pk %}" class="nav-arrow"> &gt; </a>
+  {% else %}
+  <span class="nav-arrow disabled">&gt;</span>
+  {% endif %}
+</div>
+<div id="deleteItem-{{ workout.pk }}" class="popup-form" style="display: none">
+  <div class="form-content">
+    <span class="close-button">&times;</span>
+    <h3>Delete Workout</h3>
+    <p>
+      Are you sure you want to delete "{{ workout.workout_type|capfirst }}"?
+    </p>
+    <form
+      method="POST"
+      action="{% url 'workout-delete' workout.pk %}"
+      style="display: inline"
+    >
+      {% csrf_token %}
+      <button type="submit" class="button delete-button">Delete Workout</button>
+    </form>
+  </div>
+</div>
+<div id="updateItem-{{ workout.pk }}" class="popup-form" style="display: none">
+  <div class="form-content">
+    <span class="close-button">&times;</span>
+    <section id="log-workout" class="section">
+        <form id="workoutForm" class="data-form" method="POST" action="{% url 'workout-update' workout.pk %}" onsubmit="return confirm('Are you sure you want to update this workout?');">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="workoutType">Select Type of Workout:</label>
+                <select id="workoutType" name="workout_type" required>
+                <option value="">--Select a Workout--</option>
+                <option value="Running" {% if workout.workout_type == "Running" %}selected{% endif %}>Running</option>
+                <option value="Walking" {% if workout.workout_type == "Walking" %}selected{% endif %}>Walking</option>
+                <option value="Cycling" {% if workout.workout_type == "Cycling" %}selected{% endif %}>Cycling</option>
+                <option value="Yoga" {% if workout.workout_type == "Yoga" %}selected{% endif %}>Yoga</option>
+                <option value="Strength Training" {% if workout.workout_type == "Strength Training" %}selected{% endif %}>Strength Training</option>
+                <option value="HIIT" {% if workout.workout_type == "HIIT" %}selected{% endif %}>HIIT</option>
+                <option value="Rowing" {% if workout.workout_type == "Rowing" %}selected{% endif %}>Rowing</option>
+                <option value="Pilates" {% if workout.workout_type == "Pilates" %}selected{% endif %}>Pilates</option>
+                <option value="Swimming" {% if workout.workout_type == "Swimming" %}selected{% endif %}>Swimming</option>
+                <option value="Hiking" {% if workout.workout_type == "Hiking" %}selected{% endif %}>Hiking</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="duration">Duration (minutes):</label>
+                <input type="number" id="duration" name="duration" min="1" value="{{ workout.duration }}" required>
+            </div>
+
+            <div id="dynamicWorkoutFields">
+                <div class="form-group" id="distanceGroup" style="display: none">
+                <label for="distance">Distance (km):</label>
+                <input type="number" id="distance" name="distance" step="0.1" min="0.1" value="{{ workout.distance|default:'' }}">
+                </div>
+                
+                <div class="form-group" id="paceGroup" style="display: none">
+                <label>Pace (min/km):</label>
+                <p id="paceDisplay" class="calculated-value">{{ workout.pace|default:'' }}</p>
+                <input type="hidden" id="pace" name="pace" value="{{ workout.pace|default:'' }}">
+                </div>
+                
+                <div class="form-group" id="intensityGroup" style="display: none">
+                <label for="intensity">Intensity:</label>
+                <select id="intensity" name="intensity">
+                    <option value="Low" {% if workout.intensity == "Low" %}selected{% endif %}>Low</option>
+                    <option value="Medium" {% if workout.intensity == "Medium" %}selected{% endif %}>Medium</option>
+                    <option value="High" {% if workout.intensity == "High" %}selected{% endif %}>High</option>
+                </select>
+                </div>
+            </div>
+
+            <div class="form-group" id="calsGroup" style="display: none">
+                <label>Estimated Calories Burnt:</label>
+                <p id="estimatedCaloriesDisplay" class="calculated-value">{{ workout.calories }}</p>
+                <input type="hidden" id="estimatedCalories" name="calories" value="{{ workout.calories }}">
+                <p class="disclaimer">
+                <strong>Disclaimer:</strong>
+                <br>
+                This is an estimate based on an average healthy 70kg human being, and
+                can vary significantly from person to person. For more accurate
+                results, consider using a fitness tracker or a calculator that
+                incorporates more personal data.
+                </p>
+            </div>
+            
+            <button type="submit" class="button">Update Workout</button>
+        </form>
+</section>
 {% endblock %}

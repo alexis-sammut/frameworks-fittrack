@@ -28,7 +28,7 @@
           </button>
         </li>
         <li>
-          <button id="deleteAccountBtn" class="settings-row delete-button">
+          <button id="deleteAccountBtn" class="settings-row">
             <img
               src="/static/images/delete.png"
               alt="Permanently Delete Account Icon"
@@ -53,14 +53,6 @@
               autocomplete="new-password"
             />
           </div>
-          {% comment %} {% with messages =
-          get_flashed_messages(with_categories=true) %} {% if messages %}
-          <div class="flash">
-            {% for category, message in messages %}
-            <p class="flash-{{ category }}">{{ message }}</p>
-            {% endfor %}
-          </div>
-          {% endif %} {% endwith %} {% endcomment %}
           <button type="submit" class="account-button">Change password</button>
         </form>
       </div>

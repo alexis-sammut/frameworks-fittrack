@@ -1,0 +1,66 @@
+{% extends "base.html" %} {% block main %}
+<section class="section">
+  {% for mood in moods %}
+  <a href="{% url 'mood-detail' mood.pk %}" class="list-item-link">
+    <div class="container">
+      <div class="list-item">
+        <div class="list-item-header">
+          <span class="list-item-name">Mood: {{ mood.mood }}/10</span>
+          <span class="list-item-date">{{ mood.date }}</span>
+
+          <div class="actions">
+            <img
+              src="/static/images/edit.png"
+              alt="Edit information Icon"
+              class="editBtn"
+              data-mood-value="{{ mood.mood }}"
+              data-mood-notes="{{ mood.notes|default:'' }}"
+              data-update-url="{% url 'mood-update' mood.pk %}"
+            />
+            <img
+              src="/static/images/delete.png"
+              alt="Delete Mood Icon"
+              class="deleteBtn"
+              data-mood-id="{{ mood.pk }}"
+              data-mood-name="Mood {{ mood.mood }}"
+            />
+          </div>
+        </div>
+
+        {% if mood.notes %}
+        <div class="nutrition-summary">
+          <div class="notes-content">
+            <p><strong>Notes:</strong></p>
+            <p>{{ mood.notes }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</section>
+
+{% for mood in moods %}
+<div id="deleteItem-{{ mood.pk }}" class="popup-form" style="display: none">
+  <div class="form-content">
+    <span class="close-button">&times;</span>
+    <h3>Delete Mood</h3>
+    <p>Are you sure you want to delete the mood entry for {{ mood.date }}?</p>
+    <form
+      method="POST"
+      action="{% url 'mood-delete' mood.pk %}"
+      style="display: inline"
+    >
+      {% csrf_token %}
+      <button type="submit" class="button delete-button">Delete Mood</button>
+    </form>
+  </div>
+</div>
+{% endfor %} 
+<div class="detail-navigation">
+  <a href="{% url 'log-mood'%}">
+    <img src="/static/images/add.png" alt="Add icon" />
+  </a>
+</div>
+{% endblock %}

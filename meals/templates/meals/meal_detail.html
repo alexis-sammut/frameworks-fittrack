@@ -1,0 +1,202 @@
+{% extends "base.html" %} {% block main %}
+<div class="detail-actions">
+  <a href="{% url 'meals-list' %}" class="small-button secondary-button"
+    >&#x2190; Back to Meals
+  </a>
+</div>
+<section class="section">
+  <div class="container">
+  
+
+    <div class="detail-item">
+      <div class="list-item-header">
+        <span class="list-item-name">{{ meal.name|capfirst }}</span>
+        <span class="list-item-date">{{ meal.date }}</span>
+
+        <div class="actions">
+          <a href="{% url 'meal-update' meal.pk %}">
+            <img
+              src="/static/images/edit.png"
+              alt="Edit information Icon"
+              id="editBtn"
+            />
+          </a>
+          <img
+            src="/static/images/delete.png"
+            alt="Delete Meal Icon"
+            class="deleteBtn"
+            data-meal-id="{{ meal.pk }}"
+            data-meal-name="{{ meal.name|capfirst }}"
+          />
+        </div>
+      </div>
+      <div class="detail-section">
+        <h3>Nutritional Information</h3>
+        <div class="stats-grid-meal">
+          <div class="stat-box amount-colour">
+            <p>Total Weight</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_weight|floatformat:1 }}</span
+              >
+              <span class="unit">g</span>
+            </div>
+          </div>
+
+          <div class="stat-box fat-colour">
+            <p>Total Fat</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_total_fat|floatformat:1 }}</span
+              >
+              <span class="unit">g</span>
+            </div>
+          </div>
+
+          <div class="stat-box fat-colour">
+            <p>Saturated Fat</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_saturated_fat|floatformat:1 }}</span
+              >
+              <span class="unit">g</span>
+            </div>
+          </div>
+
+          <div class="stat-box carbs-colour">
+            <p>Total Carbs</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_total_carbs|floatformat:1 }}</span
+              >
+              <span class="unit">g</span>
+            </div>
+          </div>
+
+          <div class="stat-box carbs-colour">
+            <p>Fiber</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_fiber|floatformat:1 }}</span
+              >
+              <span class="unit">g</span>
+            </div>
+          </div>
+
+          <div class="stat-box carbs-colour">
+            <p>Sugar</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_sugar|floatformat:1 }}</span
+              >
+              <span class="unit">g</span>
+            </div>
+          </div>
+
+          <div class="stat-box micronutrients-colour">
+            <p>Sodium</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_sodium|floatformat:1 }}</span
+              >
+              <span class="unit">mg</span>
+            </div>
+          </div>
+
+          <div class="stat-box micronutrients-colour">
+            <p>Potassium</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_potassium|floatformat:1 }}</span
+              >
+              <span class="unit">mg</span>
+            </div>
+          </div>
+
+          <div class="stat-box micronutrients-colour">
+            <p>Cholesterol</p>
+            <div class="data">
+              <span class="stat-value"
+                >{{ meal.total_cholesterol|floatformat:1 }}</span
+              >
+              <span class="unit">mg</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ingredients-list">
+        <h3>Ingredients</h3>
+        {% if ingredients %}
+        <table class="nutrition-table">
+          <thead>
+            <tr>
+              <th>Ingredient</th>
+              <th>Weight (g)</th>
+              <th>Fat (g)</th>
+              <th>Sat. Fat (g)</th>
+              <th>Carbs (g)</th>
+              <th>Fiber (g)</th>
+              <th>Sugar (g)</th>
+              <th>Sodium (mg)</th>
+              <th>Potassium (mg)</th>
+              <th>Cholesterol (mg)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ingredient in ingredients %}
+            <tr>
+              <td>{{ ingredient.name }}</td>
+              <td>{{ ingredient.weight|floatformat:1 }}</td>
+              <td>{{ ingredient.total_fat|floatformat:1 }}</td>
+              <td>{{ ingredient.saturated_fat|floatformat:1 }}</td>
+              <td>{{ ingredient.total_carbs|floatformat:1 }}</td>
+              <td>{{ ingredient.fiber|floatformat:1 }}</td>
+              <td>{{ ingredient.sugar|floatformat:1 }}</td>
+              <td>{{ ingredient.sodium|floatformat:1 }}</td>
+              <td>{{ ingredient.potassium|floatformat:1 }}</td>
+              <td>{{ ingredient.cholesterol|floatformat:1 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p>No ingredients recorded.</p>
+        {% endif %}
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="detail-navigation">
+  {% if previous_meal %}
+  <a href="{% url 'meal-detail' previous_meal.pk %}"> &lt; </a>
+  {% else %}
+  <span class="disabled">&lt;</span>
+  {% endif %}
+
+  <a href="{% url 'log-meal'%}">
+    <img src="/static/images/add.png" alt="Add icon" />
+  </a>
+
+  {% if next_meal %}
+  <a href="{% url 'meal-detail' next_meal.pk %}" class="nav-arrow"> &gt; </a>
+  {% else %}
+  <span class="nav-arrow disabled">&gt;</span>
+  {% endif %}
+</div>
+<div id="deleteItem-{{ meal.pk }}" class="popup-form" style="display: none">
+  <div class="form-content">
+    <span class="close-button">&times;</span>
+    <h3>Delete Meal</h3>
+    <p>Are you sure you want to delete "{{ meal.name|capfirst }}"?</p>
+    <form
+      method="POST"
+      action="{% url 'meal-delete' meal.pk %}"
+      style="display: inline"
+    >
+      {% csrf_token %}
+      <button type="submit" class="button delete-button">Delete Meal</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
